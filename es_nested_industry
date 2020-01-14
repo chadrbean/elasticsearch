@@ -1,0 +1,65 @@
+from elasticsearch import Elasticsearch
+import json
+import sys
+
+
+def find_country(industry):
+
+    es = Elasticsearch(['10.138.15.223', '10.138.15.220', '10.138.15.228'])
+
+    q = {
+        "query": {
+            "bool":{
+                "must":[
+                    {"match_phrase": {"industry": "{}".format(industry)}},
+            {"match": {"country": "US"}},
+            {"nested": {"path": "current_positions","query": {"bool": {"should": []}}}}
+            ]
+            
+            }
+            }}
+
+    with open(sys.argv[1]) as f:
+        for line in f:
+            q["query"]["bool"]["must"][2]["nested"]["query"]["bool"]["should"].append({
+                "match_phrase": {"current_positions.title": line.strip()}
+            })
+ 
+    search_object = q
+    result = es.count(
+        index='precise-profile',
+        body=json.dumps(search_object),
+        request_timeout=30
+    )
+    return(result)
+
+def run_query_find_top_industries():
+
+    es = Elasticsearch(['10.138.15.223', '10.138.15.220', '10.138.15.228'])
+
+    q = {
+    "size": 0,
+    "aggs" : {
+        "industries" : {
+            "terms" : { "field" : "industry.keyword",
+            "size" : 100}
+        }
+    }}
+
+    search_object = q
+    result = es.search(
+        index='precise-profile',
+        body=json.dumps(search_object),
+        request_timeout=30
+    )
+
+    
+    for i in result["aggregations"]["industries"]["buckets"]:
+        find_country_counts = find_country(i["key"])
+        print(i["key"] + "\t" + str(find_country_counts["count"]))
+       
+ 
+
+
+
+store_data = run_query_find_top_industries()
