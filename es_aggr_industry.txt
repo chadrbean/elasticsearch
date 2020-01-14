@@ -1,2 +1,0 @@
-curl -XGET '10.138.15.223:9200/precise-profile/_search' -H 'Content-Type: application/json' -d' 
-{"size": 0,"aggs" : {"industries" : {"terms" : { "field" : "industry.keyword","size" : 100}}}}'
