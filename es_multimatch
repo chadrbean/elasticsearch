@@ -1,0 +1,31 @@
+from elasticsearch import Elasticsearch
+import json
+import sys
+
+def run_query():
+
+    es = Elasticsearch(["10.138.0.47", "10.138.0.49", "10.138.0.35"])
+    q = {
+       "query": {
+            "multi_match" : {
+                "lenient": True,
+                "operator": "or",
+                "type": "most_fields",
+                "query": sys.argv[1],
+                "fields": ["current.*", "experiance.*", "updated"]
+
+            }
+        }
+        }
+    search_object = q
+    result = es.search(
+        index='li_data',
+        body=json.dumps(search_object), 
+        size=sys.argv[2]
+    )
+    print(result)
+
+
+
+
+run_query()
