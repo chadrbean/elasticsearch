@@ -1,0 +1,125 @@
+Skip to content
+Search or jump to…
+
+Pull requests
+Issues
+Marketplace
+Explore
+ 
+@dabeanman808 
+We are having a problem billing the preciseprofile organization. Please update your payment method or call your payment provider for details on why the transaction failed. If you don’t need access to your private repositories, you can downgrade to GitHub Team For Open Source.
+You can always contact support with any questions.
+Learn Git and GitHub without any code!
+Using the Hello World guide, you’ll start a branch, write comments, and open a pull request.
+
+
+dabeanman808
+/
+dabeanman808_personal
+Private
+0
+00
+ Code Issues 0 Pull requests 0 Actions Projects 0 Security Insights Settings
+dabeanman808_personal/lead_generation_csv_requests/es_linkedin_scroll.py / 
+@chadrbean chadrbean adding files after restore
+512584a on Jun 26, 2019
+92 lines (74 sloc)  1.9 KB
+ 
+Code navigation is available!
+Navigate your code with ease. Click on function and method calls to jump to their definitions or references in the same repository. Learn more
+
+You're using code navigation to jump to definitions or references.
+Learn more or give us feedback
+# coding:utf-8
+
+from elasticsearch import Elasticsearch
+import json
+import sys
+
+# Define config
+result_count = 1000
+host = "10.138.0.47"
+port = 9200
+timeout = 1000
+index = "linkedin-v1"
+# doc_type = "type"
+size = 10000
+body = {
+    "query": {
+        "match" : {
+            "locality" : "San Francisco"
+        }
+    }
+}
+
+# Init Elasticsearch instance
+es = Elasticsearch(
+    [
+        {
+            'host': host,
+            'port': port
+        }
+    ],
+    timeout=timeout
+)
+
+
+# Process hits here
+def process_hits(hits):
+    count = 0
+    for item in hits:
+        # print(json.dumps(item, indent=2))
+        
+        if "unique_id" in item["_source"]:
+            del item["_source"]["unique_id"]
+        if "_key" in item["_source"]:
+            del item["_source"]["_key"]
+        if "last_visited" in item["_source"]:
+            del item["_source"]["last_visited"]
+        if "updated" in item["_source"]:
+            del item["_source"]["updated"]
+        if "linkedin_id_count" in item["_source"]:
+            del item["_source"]["linkedin_id_count"]
+        print(json.dumps(item["_source"]))
+        count += 1
+        if result_count == count:
+            exit()
+           
+
+
+# Check index exists
+if not es.indices.exists(index=index):
+    print("Index " + index + " not exists")
+    exit()
+
+# Init scroll by search
+data = es.search(
+    index=index,
+    # doc_type=doc_type,
+    scroll='1m',
+    size=size,
+    body=body
+)
+
+# Get the scroll ID
+sid = data['_scroll_id']
+scroll_size = len(data['hits']['hits'])
+
+
+
+# Before scroll, process current batch of hits
+process_hits(data['hits']['hits'])
+
+while scroll_size > 0:
+    "Scrolling..."
+    data = es.scroll(scroll_id=sid, scroll='1m')
+
+    # Process current batch of hits
+    process_hits(data['hits']['hits'])
+
+    # Update the scroll ID
+    sid = data['_scroll_id']
+
+    # Get the number of results that returned in the last scroll
+    scroll_size = len(data['hits']['hits'])
+
