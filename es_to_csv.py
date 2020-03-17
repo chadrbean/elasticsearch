@@ -3,7 +3,7 @@ import json
 import csv
 from elasticsearch import Elasticsearch
 
-es = Elasticsearch(["10.138.0.47", "10.138.0.49", "10.138.0.35", "10.138.0.50", "10.138.0.51"])
+es = Elasticsearch(['Ip1', 'Ip2', 'ip3'])
 
 def build_query(domain=None, titles=[]):
     q = {
