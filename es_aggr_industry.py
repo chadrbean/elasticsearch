@@ -6,7 +6,7 @@ import csv
 
 def find_industries():
 
-    es = Elasticsearch(['10.138.15.223', '10.138.15.220', '10.138.15.228'])
+    es = Elasticsearch(['Ip1', 'Ip2', 'ip3'])
     # q = {"size": 0,"aggs" : {"industries" : {"terms" : { "field" : "linkedin.industry.keyword"}}}
     q = {"size": 0,"aggs" : {"industries" : {"terms" : { "field" : "linkedin.industry.keyword","size" : 10000}}}}
 
