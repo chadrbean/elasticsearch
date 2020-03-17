@@ -8,7 +8,7 @@ def run_query():
         country = f.readlines()
         for i in country:
             i = i.strip().upper()
-            es = Elasticsearch(["10.138.0.47", "10.138.0.49", "10.138.0.35"])
+            es = Elasticsearch(['Ip1', 'Ip2', 'ip3'])
             q = {
             "query": {
                 "term" : { "country.keyword" : i }
