@@ -4,7 +4,7 @@ import sys
 
 def run_query():
 
-    es = Elasticsearch(["10.138.0.47", "10.138.0.49", "10.138.0.35"])
+    es = Elasticsearch(['Ip1', 'Ip2', 'ip3'])
     q = {
        "query": {
             "multi_match" : {
