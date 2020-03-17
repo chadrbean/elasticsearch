@@ -6,7 +6,7 @@ import csv
 
 
 def find_linkedin_count():
-    es = Elasticsearch(['10.138.15.223', '10.138.15.220', '10.138.15.228'])
+    es = Elasticsearch(['Ip1', 'Ip2', 'ip3'])
     q = {"query":{"exists":{"field":"linkedin"}}}
     search_object = q
     result = es.count(
@@ -16,7 +16,7 @@ def find_linkedin_count():
     )
     return(result)
 def find_cb_count():
-    es = Elasticsearch(['10.138.15.223', '10.138.15.220', '10.138.15.228'])
+    es = Elasticsearch(['Ip1', 'Ip2', 'ip3'])
     q = {"query":{"exists":{"field":"crunchbase"}}}
     search_object = q
     result = es.count(
@@ -27,7 +27,7 @@ def find_cb_count():
     return(result)
 
 def find_neither():
-    es = Elasticsearch(['10.138.15.223', '10.138.15.220', '10.138.15.228'])
+    es = Elasticsearch(['Ip1', 'Ip2', 'ip3'])
     q = {"query":{"bool":{"must":[{"bool":{"must_not":{"exists":{"field":"crunchbase"}}}},{"bool":{"must_not":{"exists":{"field":"linkedin"}}}}]}}}
 
     
